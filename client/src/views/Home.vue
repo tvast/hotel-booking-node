@@ -11,7 +11,7 @@
 				<md-autocomplete @input="searchCity()" v-model="selectedCountryDeparture" :md-options="$store.getters.dataCitySearch" @md-changed="getCountriesDeparture" @md-selected="getSeletedItem()">
       <label>Departure</label>
 
-      <template slot="md-autocomplete-item" slot-scope="{ item, term }"> {{item.name}}--{{item.id}} {{term}}</template>
+      <template slot="md-autocomplete-item" slot-scope="{ item }"> {{item.name}}--{{item.id}}</template>
     </md-autocomplete>
 			</div>
 			<div class="guests">
