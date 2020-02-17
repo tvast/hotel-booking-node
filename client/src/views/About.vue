@@ -13,7 +13,7 @@
         <md-card-area>
           <md-card-header>
             <span class="md-title">{{item.hotel.type}}</span>
-            <span class="md-subhead">{{truncateString(item.hotel.description.text,124)}}</span>
+            <span class="md-subhead">{{truncateString(item.hotel.name)}}</span>
           </md-card-header>
 
           <md-card-actions>
@@ -30,6 +30,8 @@
       </template>
 
       <script>
+      import router from '../router/index.js'
+      import Swal from 'sweetalert2'
       export default {
 	name: 'Home',
 	components: {
@@ -43,21 +45,7 @@ data: () => ({
   }),
 
 methods :{
-	getSeletedItem(){
-		this.selectedCountryDeparture = this.selectedCountryDeparture.iataCode
-	},getCountriesDeparture (searchTerm) {
-		this.countries = new Promise(resolve => {
-			window.setTimeout(() => {
-				if (!searchTerm) {
-					resolve(this.countryList)
-				} else {
-					const term = searchTerm.toLowerCase()
-
-					resolve(this.countryList.filter(({ name }) => name.toLowerCase().includes(term)))
-				}
-			}, 500)
-		})
-	},postOffer() {
+	postOffer() {
 		// this.showLoader(true)
     // var vm =this;
     // var urlSend= "keyword="+this.selectedCountryDeparture
@@ -69,14 +57,12 @@ function chooseHotel(hotel) {
 this.selectedTrip = this.$store.getters.flavor.data.find(chooseHotel);
 window.console.log(this.selectedTrip)
 // var sendRFEquest=""
-var x = this.selectedTrip.offers[0].id//.forEach(x=> sendRFEquest = x.id)
-window.console.log(x)
 
-
-    async function postUrlEncoded() {
+var urlSend= "offerId="+this.selectedTrip.offers[0].id
+    async function gobook() {
   // Default options are marked with *
 
-  const response = await fetch("http://localhost:2800/booking", {
+  const response = await fetch("http://localhost:2800/booking?"+urlSend, {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
     mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -87,17 +73,39 @@ window.console.log(x)
   },
     redirect: 'follow', // manual, *follow, error
     referrerPolicy: 'no-referrer', // no-referrer, *client
-    body:x// body data type must match "Content-Type" header
+   body: urlSend// body data type must match "Content-Type" header
 });
    // this.isLoading = true
   return await response.json(); // parses JSON response into native JavaScript objects
 }
 try {
-postUrlEncoded().then((data) => {
-	window.console.log(data)
+gobook().then((data) => {
+
+	if(data.errors){
+		Swal.fire({
+  icon: 'error',
+  title: 'Oops...',
+  text: data.errors[0].title,
+  footer: '<a href>Why do I have this issue?</a>'
+})
+	}
+	else if(data.data){
+		window.console.log(data)
 	this.$store.commit('changePricing', data)
-	alert(data);
 	// this.showLoader(false)
+	router.push('result')
+	// this.showLoader(false)
+	}
+
+	else{
+				Swal.fire({
+  icon: 'error',
+  title: 'Oops...',
+  text: data.errors[0].title,
+  footer: '<a href>Why do I have this issue?</a>'
+})
+	}
+	
 
 });
 

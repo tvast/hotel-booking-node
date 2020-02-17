@@ -49,6 +49,11 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 import router from '../router/index.js'
+
+import Swal from 'sweetalert2'
+ 
+// CommonJS
+
 export default {
 	name: 'Home',
 	components: {
@@ -102,13 +107,24 @@ methods :{
   return await response.json(); // parses JSON response into native JavaScript objects
 }
 
+try {
+
 postUrlEncoded().then((data) => {
 	window.console.log(data)
 	this.countryList=data.data;
 	this.$store.commit('dataCitySearchMute', data.data)
 	// this.showLoader(false)
 
-});
+});}
+
+catch{
+	Swal.fire({
+  icon: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong!',
+  footer: '<a href>Why do I have this issue?</a>'
+})
+}
 },searchHotel(){
 	// this.showLoader(true)
   var urlSend= "keyword="+this.selectedCountryDeparture
@@ -144,7 +160,12 @@ postHotel(this.selectedCountryDeparture).then((data) => {
 
 });}
   catch(error) {
-  alert(error);
+  Swal.fire({
+  icon: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong!',
+  footer: '<a href>Why do I have this issue?</a>'
+})
 
      }
 }
