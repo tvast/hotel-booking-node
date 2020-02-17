@@ -91,6 +91,119 @@ catch(error) {
 
   }); 
 
+app.post('/HOTELID', function(req, res) {
+  idOfHotel = req.body.idOfHotel;
+  guest = req.body.guest;
+console.log(keyword)
+try 
+{
+  token("qztkbf5XWjNSGkXRF9bfAwNg6bELWvVD","w9mJ7ZJzlEGNffut").then(function(tokenAuth){
+// console.log(tokenAuth.access_token)
+
+      async function hotelID(city) {
+  // returnSearch ="";
+  // console.log(url)
+  // Default options are marked with *
+      const response = await fetch("https://test.api.amadeus.com/v2"+"/shopping/hotel-offers/"+idOfHotel+"?paymentPolicy='GUARANTEE'" , {
+        method: 'GET', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+          // 'Content-Type': 'application/json'   
+          //'Content-Type': ,
+          'Content-Type': 'application/x-www-form-urlencoded',authorization: 'Bearer '+tokenAuth.access_token
+         },
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *client
+        // body: 
+      });
+      return await response.json(); // parses JSON response into native JavaScript objects
+    }
+
+  hotelID(idOfHotel).then(w=>res.send(JSON.stringify(w)));
+
+    })
+
+}
+catch(error) {
+  console.error(error);
+}
+
+  }); 
+
+app.post('/booking', function(req, res) {
+  offerId = req.body.offerId
+
+  console.log(req.body.offerId)
+
+  var request = 
+{
+  "data": {
+    offerId,
+    "guests": [
+      {
+        "name": {
+          "title": "MR",
+          "firstName": "BOB",
+          "lastName": "SMITH"
+        },
+        "contact": {
+          "phone": "+33679278416",
+          "email": "bob.smith@email.com"
+        }
+      }
+    ],
+    "payments": [
+      {
+        "method": "creditCard",
+        "card": {
+          "vendorCode": "VI",
+          "cardNumber": "4111111111111111",
+          "expiryDate": "2023-01"
+        }
+      }
+    ]
+  }
+}
+console.log(request)
+try 
+{
+  token("qztkbf5XWjNSGkXRF9bfAwNg6bELWvVD","w9mJ7ZJzlEGNffut").then(function(tokenAuth){
+// console.log(tokenAuth.access_token)
+
+      async function bookingHotel(inputBOooking) {
+  // returnSearch ="";
+  // console.log(url)
+  // Default options are marked with *
+     const response = await fetch(NaseUrl+"/v1/booking/hotel-bookings", {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    mode: 'cors', // no-cors, *cors, same-origin
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json','authorization': 'Bearer '+tokenAuth.access_token
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: 'follow', // manual, *follow, error
+    referrerPolicy: 'no-referrer', // no-referrer, *client
+    body: JSON.stringify(request) // body data type must match "Content-Type" header
+  });
+  // console.log(token)
+  return await response.json(); // parses JSON response into native JavaScript objects
+    }
+
+  bookingHotel().then(w=>res.send(JSON.stringify(w))).catch(error =>console.log(error));
+
+    })
+
+}
+catch(error) {
+  console.error(error);
+}
+
+  }); 
+
 
 var server = app.listen(process.env.PORT || 2800,()=>{
   console.log("Howdy, I am running at PORT 2800")
